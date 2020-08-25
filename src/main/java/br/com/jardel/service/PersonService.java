@@ -1,7 +1,9 @@
 package br.com.jardel.service;
 
 import br.com.jardel.PersonRepository;
-import br.com.jardel.data.Person;
+import static br.com.jardel.converter.MapperConverter.convert;
+import br.com.jardel.data.entity.Person;
+import br.com.jardel.data.vo.PersonVO;
 import br.com.jardel.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Controller;
 
@@ -16,33 +18,41 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public Person create(Person person) {
-        return personRepository.save(person);
+    public PersonVO create(PersonVO person) {
+        var entity = personRepository.save(convert(person, Person.class));
+
+        return convert(entity, PersonVO.class);
     }
 
     public void delete(Long id) {
-        Person entity = findViewById(id);
+        var entity = findEntityById(id);
 
         personRepository.delete(entity);
     }
 
-    public List<Person> findAll() {
-        return personRepository.findAll();
+    public List<PersonVO> findAll() {
+        return convert(personRepository.findAll(), PersonVO.class);
     }
 
-    public Person findViewById(Long id) {
+    public PersonVO findById(Long id) {
+        var entity = findEntityById(id);
+
+        return convert(entity, PersonVO.class);
+    }
+
+    public PersonVO update(PersonVO vo) {
+        var entity = findEntityById(vo.getId());
+
+        entity.setFirstName(vo.getFirstName());
+        entity.setLastName(vo.getLastName());
+        entity.setAddress(vo.getAddress());
+        entity.setGender(vo.getGender());
+
+        return convert(personRepository.save(entity), PersonVO.class);
+    }
+
+    private Person findEntityById(Long id) {
         return personRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Não encontrado a person"));
-    }
-
-    public Person update(Person person) {
-        Person entity = findViewById(person.getId());
-
-        entity.setFirstName(person.getFirstName());
-        entity.setLastName(person.getLastName());
-        entity.setAddress(person.getAddress());
-        entity.setGender(person.getGender());
-
-        return personRepository.save(entity);
     }
 }

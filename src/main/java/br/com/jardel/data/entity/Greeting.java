@@ -1,4 +1,4 @@
-package br.com.jardel.data;
+package br.com.jardel.data.entity;
 
 public class Greeting {
     private final Integer id;
