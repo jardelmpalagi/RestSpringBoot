@@ -22,7 +22,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
     runtimeOnly 'mysql:mysql-connector-java'
 

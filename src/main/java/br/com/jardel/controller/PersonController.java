@@ -2,11 +2,14 @@ package br.com.jardel.controller;
 
 import br.com.jardel.data.vo.PersonVO;
 import br.com.jardel.service.PersonService;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static br.com.jardel.config.WebConfig.APPLICATION_YAML_VALUE;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
@@ -23,12 +26,22 @@ public class PersonController {
     @GetMapping(value = "/{id}",
             produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
     public PersonVO getPerson(@PathVariable("id") Long id) {
-        return personService.findById(id);
+
+        PersonVO personVO = personService.findById(id);
+
+        WebMvcLinkBuilder webMvcLinkBuilder = linkTo(methodOn(this.getClass()).getPerson(id));
+        personVO.add(webMvcLinkBuilder.withRel("self"));
+
+        return personVO;
     }
 
     @GetMapping(produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
     public List<PersonVO> getAll() {
-        return personService.findAll();
+
+        List<PersonVO> persons = personService.findAll();
+        persons.forEach(p -> p.add(linkTo(methodOn(this.getClass()).getAll()).withRel("all")));
+
+        return persons;
     }
 
     @PostMapping(produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE},
