@@ -1,6 +1,6 @@
 package br.com.jardel.service;
 
-import br.com.jardel.PersonRepository;
+import br.com.jardel.repository.PersonRepository;
 import static br.com.jardel.converter.MapperConverter.convert;
 import br.com.jardel.data.entity.Person;
 import br.com.jardel.data.vo.PersonVO;

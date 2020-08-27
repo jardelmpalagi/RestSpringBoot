@@ -1,4 +1,4 @@
-package br.com.jardel;
+package br.com.jardel.repository;
 
 import br.com.jardel.data.entity.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
