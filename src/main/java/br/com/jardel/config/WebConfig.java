@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -16,10 +17,24 @@ public class WebConfig implements WebMvcConfigurer {
     public static final MediaType APPLICATION_YAML = MediaType.valueOf(APPLICATION_YAML_VALUE);
 
     @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+    }
+
+    /**
+     * Suporte a Negotiation formato YAML
+     * @param converters
+     */
+    @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new YamlJackson2HttpMessageConverter());
     }
 
+    /**
+     * Suporte a Negotiation por onde receberá o content type
+     * @param configurer
+     */
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
 
