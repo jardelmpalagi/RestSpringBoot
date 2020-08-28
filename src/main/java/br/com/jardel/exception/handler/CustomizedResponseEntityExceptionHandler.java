@@ -1,6 +1,7 @@
 package br.com.jardel.exception.handler;
 
 import br.com.jardel.exception.ExceptionResponse;
+import br.com.jardel.exception.InvalidJwtAuthenticationException;
 import br.com.jardel.exception.ResourceNotFoundException;
 import br.com.jardel.exception.UnsuportedMathOperationException;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,16 @@ public class CustomizedResponseEntityExceptionHandler {
                 new ExceptionResponse(new Date(), e.getMessage(), request.getDescription(false));
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidJwtAuthenticationException.class)
+    public final ResponseEntity<ExceptionResponse> invalidJwtAuthenticationExceptionException(
+            InvalidJwtAuthenticationException e, WebRequest request) {
+
+        ExceptionResponse exceptionResponse =
+                new ExceptionResponse(new Date(), e.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
