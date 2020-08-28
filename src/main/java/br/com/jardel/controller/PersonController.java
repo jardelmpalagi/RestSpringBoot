@@ -64,4 +64,17 @@ public class PersonController {
     public void delete(@PathVariable("id") Long id) {
         personService.delete(id);
     }
+
+    @ApiOperation(value = "Destiva uma person")
+    @PatchMapping(value = "/{id}",
+            produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
+    public PersonVO disablePerson(@PathVariable("id") Long id) {
+
+        PersonVO personVO = personService.disblePerson(id);
+
+        WebMvcLinkBuilder webMvcLinkBuilder = linkTo(methodOn(this.getClass()).getPerson(id));
+        personVO.add(webMvcLinkBuilder.withRel("self"));
+
+        return personVO;
+    }
 }

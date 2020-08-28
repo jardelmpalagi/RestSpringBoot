@@ -6,6 +6,7 @@ import br.com.jardel.data.entity.Person;
 import br.com.jardel.data.vo.PersonVO;
 import br.com.jardel.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,8 +48,17 @@ public class PersonService {
         entity.setLastName(vo.getLastName());
         entity.setAddress(vo.getAddress());
         entity.setGender(vo.getGender());
+        entity.setGender(vo.getGender());
+        entity.setEnabled(vo.getEnabled());
 
         return convert(personRepository.save(entity), PersonVO.class);
+    }
+
+    @Transactional
+    public PersonVO disblePerson(Long id) {
+        personRepository.disablePerson(id);
+
+        return convert(findEntityById(id), PersonVO.class);
     }
 
     private Person findEntityById(Long id) {
