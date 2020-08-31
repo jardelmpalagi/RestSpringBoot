@@ -1,14 +1,16 @@
 package br.com.jardel.service;
 
-import br.com.jardel.repository.PersonRepository;
-import static br.com.jardel.converter.MapperConverter.convert;
 import br.com.jardel.data.entity.Person;
 import br.com.jardel.data.vo.PersonVO;
 import br.com.jardel.exception.ResourceNotFoundException;
+import br.com.jardel.repository.PersonRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static br.com.jardel.converter.MapperConverter.convert;
 
 @Controller
 public class PersonService {
@@ -31,8 +33,9 @@ public class PersonService {
         personRepository.delete(entity);
     }
 
-    public List<PersonVO> findAll() {
-        return convert(personRepository.findAll(), PersonVO.class);
+    public List<PersonVO> findAll(Pageable pageable) {
+        var page = personRepository.findAll(pageable);
+        return convert(page.getContent(), PersonVO.class);
     }
 
     public PersonVO findById(Long id) {

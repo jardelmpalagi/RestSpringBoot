@@ -4,6 +4,9 @@ import br.com.jardel.data.vo.PersonVO;
 import br.com.jardel.service.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,10 +43,16 @@ public class PersonController {
     }
 
     @GetMapping(produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
-    public List<PersonVO> getAll() {
+    public List<PersonVO> getAll(@RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                       @RequestParam(value = "limit", defaultValue = "12") Integer limit,
+                                                       @RequestParam(value = "direction", defaultValue = "asc") String direction) {
 
-        List<PersonVO> persons = personService.findAll();
-        persons.forEach(p -> p.add(linkTo(methodOn(this.getClass()).getAll()).withRel("all")));
+        var sort = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sort, "firstName"));
+
+        List<PersonVO> persons = personService.findAll(pageable);
+        persons.forEach(p -> p.add(linkTo(methodOn(this.getClass()).getPerson(p.getId())).withSelfRel()));
 
         return persons;
     }
