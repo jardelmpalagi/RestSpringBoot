@@ -4,6 +4,7 @@ import br.com.jardel.data.entity.Person;
 import br.com.jardel.data.vo.PersonVO;
 import br.com.jardel.exception.ResourceNotFoundException;
 import br.com.jardel.repository.PersonRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +34,14 @@ public class PersonService {
         personRepository.delete(entity);
     }
 
-    public List<PersonVO> findAll(Pageable pageable) {
+    public Page<PersonVO> findAll(Pageable pageable) {
         var page = personRepository.findAll(pageable);
-        return convert(page.getContent(), PersonVO.class);
+        return page.map(p -> convert(p, PersonVO.class));
+    }
+
+    public Page<PersonVO> findAllByFirstName(String firstName, Pageable pageable) {
+        var page = personRepository.findByLikeFirstName(firstName, pageable);
+        return page.map(p -> convert(p, PersonVO.class));
     }
 
     public PersonVO findById(Long id) {

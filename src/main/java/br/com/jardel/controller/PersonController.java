@@ -4,13 +4,15 @@ import br.com.jardel.data.vo.PersonVO;
 import br.com.jardel.service.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static br.com.jardel.config.WebConfig.APPLICATION_YAML_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -25,8 +27,11 @@ public class PersonController {
 
     private final PersonService personService;
 
-    public PersonController(PersonService personService) {
+    private final PagedResourcesAssembler<PersonVO> pagedResourcesAssembler;
+
+    public PersonController(PersonService personService, PagedResourcesAssembler<PersonVO> pagedResourcesAssembler) {
         this.personService = personService;
+        this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
     @ApiOperation(value = "Retorna um person pelo id")
@@ -43,7 +48,7 @@ public class PersonController {
     }
 
     @GetMapping(produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
-    public List<PersonVO> getAll(@RequestParam(value = "page", defaultValue = "0") Integer page,
+    public ResponseEntity<PagedModel<?>> getAll(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                        @RequestParam(value = "limit", defaultValue = "12") Integer limit,
                                                        @RequestParam(value = "direction", defaultValue = "asc") String direction) {
 
@@ -51,10 +56,26 @@ public class PersonController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sort, "firstName"));
 
-        List<PersonVO> persons = personService.findAll(pageable);
+        Page<PersonVO> persons = personService.findAll(pageable);
         persons.forEach(p -> p.add(linkTo(methodOn(this.getClass()).getPerson(p.getId())).withSelfRel()));
 
-        return persons;
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(persons));
+    }
+
+    @GetMapping(value = "firstName/{firstName}", produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
+    public ResponseEntity<PagedModel<?>> getAll(@PathVariable("firstName") String firstName,
+                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                       @RequestParam(value = "limit", defaultValue = "12") Integer limit,
+                                                       @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+
+        var sort = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sort, "firstName"));
+
+        Page<PersonVO> persons = personService.findAllByFirstName(firstName, pageable);
+        persons.forEach(p -> p.add(linkTo(methodOn(this.getClass()).getPerson(p.getId())).withSelfRel()));
+
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(persons));
     }
 
     @PostMapping(produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE},
