@@ -48,9 +48,9 @@ public class PersonController {
     }
 
     @GetMapping(produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
-    public ResponseEntity<PagedModel<?>> getAll(@RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                       @RequestParam(value = "limit", defaultValue = "12") Integer limit,
-                                                       @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+    public ResponseEntity<PagedModel<?>> getAll(@RequestHeader("Authorization") String token, @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                @RequestParam(value = "limit", defaultValue = "12") Integer limit,
+                                                @RequestParam(value = "direction", defaultValue = "asc") String direction) {
 
         var sort = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
@@ -63,7 +63,7 @@ public class PersonController {
     }
 
     @GetMapping(value = "firstName/{firstName}", produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
-    public ResponseEntity<PagedModel<?>> getAll(@PathVariable("firstName") String firstName,
+    public ResponseEntity<PagedModel<?>> getAllByName(@PathVariable("firstName") String firstName,
                                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                        @RequestParam(value = "limit", defaultValue = "12") Integer limit,
                                                        @RequestParam(value = "direction", defaultValue = "asc") String direction) {

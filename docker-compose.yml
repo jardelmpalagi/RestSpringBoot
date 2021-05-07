@@ -1,0 +1,42 @@
+version: '3.4'
+services:
+
+  mysql:
+    image: mysql:5.7.31
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: 123
+      MYSQL_DATABASE: rest
+    ports:
+      - "3307:3306"
+    networks:
+      - rest-network
+
+  rest-spring-boot:
+    image: jardelpalagi/rest-spring-boot
+    restart: always
+    build: ./
+    working_dir: /RestSpringBoot
+    environment:
+      TZ: America/Sao_Paulo
+      SPRING_BOOT_ENVIRONMENT: Production
+    volumes:
+      - ./:/RestSpringBoot
+      - ~/.m2:/.m2
+    ports:
+      - "8080:8080"
+    networks:
+      - rest-network
+    command: ./gradlew bootRun
+    links:
+      - mysql
+    depends_on:
+      - mysql
+
+networks:
+  rest-network:
+    driver: bridge

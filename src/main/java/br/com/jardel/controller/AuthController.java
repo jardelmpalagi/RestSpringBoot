@@ -7,10 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +21,8 @@ import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 @RequestMapping("auth")
 public class AuthController {
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     private AuthenticationManager authenticationManager;
 
     private JwtTokenProvider jwtTokenProvider;
@@ -31,10 +31,12 @@ public class AuthController {
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtTokenProvider jwtTokenProvider,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostMapping(value = "/signin",
@@ -62,5 +64,11 @@ public class AuthController {
         model.put("token", token);
 
         return ResponseEntity.ok(model);
+    }
+
+    @GetMapping(value = "/password/{password}",
+            produces = {APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE, APPLICATION_YAML_VALUE})
+    public String gerarPassword(@PathVariable String password) {
+        return bCryptPasswordEncoder.encode(password);
     }
 }
