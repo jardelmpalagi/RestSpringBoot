@@ -11,8 +11,7 @@ before_install:
   - ./gradlew clean build
 script: 
   - docker-compose build
-before_deploy:
-  - echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+
 
 notifications:
   email: false
