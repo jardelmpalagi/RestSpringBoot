@@ -28,7 +28,7 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Rest API with Spring Boot 2.2.3")
+                .title("Rest API with Spring Boot 2.2.3 - Foo Bar")
                 .description("Curso Rest API with Spring Boot 2.2.3")
                 .contact(new Contact(
                         "Jardel Palagi",
