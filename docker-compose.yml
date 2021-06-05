@@ -2,7 +2,7 @@ version: '3.4'
 services:
 
   rest-spring-boot:
-    image: jardelpalagi/rest-spring-boot
+    image: rest-spring-boot
     restart: always
     build: ./
 #    working_dir: /RestSpringBoot

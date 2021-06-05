@@ -1,17 +1,14 @@
-sudo: required
-dist: bionic
-language: java
-jdk:
-  - oraclejdk11
-python:
-  - "3.6"
+language: bash
 services: docker
-before_install:
-  - sudo apt-get update
-  - ./gradlew clean build
-script: 
+script:
   - docker-compose build
-
-
+before-deploy:
+  - echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+deploy:
+  provider: script
+  script:
+    docker push jardelpalagi/rest-spring-boot;
+  on:
+    branch: master
 notifications:
   email: false
