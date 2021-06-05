@@ -11,7 +11,7 @@ before_install:
   - ./gradlew clean build
 script: 
   - docker-compose build
-before-deploy:
+before_deploy:
   - echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
 deploy:
   provider: script
