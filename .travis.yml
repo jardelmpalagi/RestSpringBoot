@@ -29,7 +29,7 @@ after_success:
   - pip3 install wheel
   - pip3 install awscli --upgrade --user
   - export PATH=$PATH:$HOME/.local/bin
-  - eval (aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 880149143655.dkr.ecr.us-east-2.amazonaws.com)
+  - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 880149143655.dkr.ecr.us-east-2.amazonaws.com
   - docker tag rest-spring-boot:latest $IMG_REPO_URL:$TRAVIS_JOB_ID
   - docker push $IMG_REPO_URL:$TRAVIS_JOB_ID
   - add-apt-repository ppa:eugenesan/ppa
